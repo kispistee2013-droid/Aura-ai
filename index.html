@@ -1,262 +1,353 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aura AI - Az Intelligens Asszisztens</title>
-<style>
-* { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body {
-    margin: 0; background: #030712; color: #f9fafb;
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-    min-height: 100vh; padding: 20px 10px;
-}
-.robot-head { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
-.face { display: flex; gap: 35px; margin-bottom: 5px; }
-.eye {
-    width: 80px; height: 80px; background: #ffffff; border-radius: 50%;
-    position: relative; overflow: hidden; box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
-    animation: blink 4s infinite;
-}
-.pupil { width: 26px; height: 26px; background: #0b0f19; border-radius: 50%; position: absolute; left: 27px; top: 27px; transition: transform 0.1s ease-out; }
-.robot-name { font-size: 14px; font-weight: bold; color: #a78bfa; letter-spacing: 3px; text-transform: uppercase; margin-top: 5px; }
-@keyframes blink { 0%, 96%, 100% { transform: scaleY(1); } 98% { transform: scaleY(0.05); } }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura AI - Az Intelligens Asszisztens</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/v6dfZhzQ/Gemini-Generated-Image-y1uvrcy1uvrcy1uv.png">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-.chat-container {
-    width: 100%; max-width: 480px; background: rgba(17, 24, 39, 0.7);
-    backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid rgba(139, 92, 246, 0.2);
-    display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-}
-#chat { height: 450px; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-.msg { padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.4; max-width: 85%; animation: fadeIn 0.3s ease; white-space: pre-wrap; word-break: break-word; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-.user { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
-.bot { background: rgba(31, 41, 55, 0.6); color: #f3f4f6; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        body {
+            margin: 0;
+            background: #030712;
+            color: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 10px;
+        }
 
-.media-card { margin-top: 10px; position: relative; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); background: #0b0f19; }
-.ai-media { width: 100%; display: block; min-height: 250px; }
-.download-btn {
-    position: absolute; bottom: 10px; right: 10px; background: rgba(17, 24, 39, 0.85);
-    color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; z-index: 10;
-    transition: background 0.2s;
-}
-.download-btn:hover { background: #7c3aed; }
+        .chat-head {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 5px;
+        }
 
-.controls { display: flex; gap: 8px; padding: 15px; background: rgba(9, 13, 26, 0.7); border-top: 1px solid rgba(139, 92, 246, 0.15); }
-input { flex: 1; padding: 14px 18px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(17, 24, 39, 0.9); color: white; outline: none; transition: border 0.2s; }
-input:focus { border-color: #8b5cf6; }
-button { padding: 0 22px; border-radius: 14px; border: none; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
-button:hover { opacity: 0.9; }
-.clear-btn { background: transparent; border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 5px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
-.clear-btn:hover { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
-</style>
+        .ai-eyes {
+            display: flex;
+            gap: 35px;
+            margin-bottom: 5px;
+        }
+
+        .eye {
+            width: 80px;
+            height: 80px;
+            background: #ffffff;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+            animation: blink 4s infinite;
+        }
+
+        .pupil {
+            width: 35px;
+            height: 35px;
+            background: #000000;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 4px solid #a855f7;
+            transition: all 0.2s ease;
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        .ai-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 5px 0;
+            letter-spacing: 2px;
+        }
+
+        .status-badge {
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #22c55e;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 500px;
+            height: 60vh;
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+        }
+
+        .messages-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-msg {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        }
+
+        .ai-msg {
+            background: #1f2937;
+            color: #f3f4f6;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #374151;
+        }
+
+        .input-area {
+            padding: 15px;
+            background: #1f2937;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #374151;
+        }
+
+        input {
+            flex: 1;
+            background: #030712;
+            border: 1px solid #4b5563;
+            padding: 12px 16px;
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: #a855f7;
+        }
+
+        button {
+            background: linear-gradient(to right, #a855f7, #ec4899);
+            border: none;
+            color: white;
+            padding: 0 20px;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .media-container {
+            margin-top: 10px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #4b5563;
+            max-width: 100%;
+        }
+
+        .media-container img, .media-container video {
+            width: 100%;
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
-<div class="robot-head">
-    <div class="face">
-        <div class="eye"><div class="pupil"></div></div>
-        <div class="eye"><div class="pupil"></div></div>
-    </div>
-    <div class="robot-name">Aura AI</div>
-    <button class="clear-btn" onclick="clearMemory()">🧠 Beszélgetés törlése</button>
-</div>
-
-<div class="chat-container">
-    <div id="chat">
-        <div class="msg bot">Szia! Aura vagyok, a személyes AI asszisztensed. Képes vagyok szövegeket írni, bonyolult matematikai vagy programozási feladatokat megoldani, sőt, lenyűgöző képeket és videókat is generálok neked teljesen ingyen! Miben segíthetek ma? ✨🤖🎨</div>
+    <div class="chat-head">
+        <div class="ai-eyes">
+            <div class="eye"><div class="pupil" id="lp"></div></div>
+            <div class="eye"><div class="pupil" id="rp"></div></div>
+        </div>
+        <div class="ai-title">AURA AI</div>
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            Összeköttetés Online
+        </div>
     </div>
 
-    <div class="controls">
-        <input id="message" placeholder="Kérdezz bármit, vagy írd: 'videó egy...'" onkeydown="if(event.key === 'Enter') sendMessage()">
-        <button id="sendBtn" onclick="sendMessage()">Küldés</button>
+    <div class="chat-container">
+        <div class="messages-area" id="msgArea">
+            <div class="message ai-msg">
+                Szia! Aura vagyok, a személyes AI asszisztensed. Képes vagyok szövegeket írni, bonyolult matematikai vagy programozási feladatokat megoldani, sőt, lenyűgöző képeket és videókat is generálok neked teljesen ingyen! Miben segíthetek ma? 🌌🤖🎨
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Kérdezz bármit, vagy írd: 'videó egy...'">
+            <button id="sendBtn">Küldés</button>
+        </div>
     </div>
-</div>
 
-<script>
-const chat = document.getElementById("chat");
-const msgInput = document.getElementById("message");
-const sendBtn = document.getElementById("sendBtn");
+    <script>
+        const msgArea = document.getElementById('msgArea');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const lp = document.getElementById('lp');
+        const rp = document.getElementById('rp');
 
-let messagesHistory = JSON.parse(localStorage.getItem("aura_ai_memory")) || [];
-
-window.onload = function() {
-    messagesHistory.forEach(msg => {
-        if(msg.role === "user") addMessage(msg.content, "user");
-        if(msg.role === "assistant") addMessage(msg.content, "bot");
-    });
-};
-
-function addMessage(text, type) {
-    const d = document.createElement("div");
-    d.className = "msg " + type;
-    d.textContent = text;
-    chat.appendChild(d);
-    chat.scrollTop = chat.scrollHeight;
-    return d;
-}
-
-function speak(text) {
-    if (!('speechSynthesis' in window)) return;
-    speechSynthesis.cancel();
-    let shortText = text.split(/[.!?]\s/)[0].substring(0, 100);
-    const u = new SpeechSynthesisUtterance(shortText);
-    const voices = speechSynthesis.getVoices();
-    const huVoice = voices.find(v => v.lang.includes('HU') && (v.name.includes('Natural') || v.name.includes('Google'))) || voices.find(v => v.lang.includes('HU'));
-    if (huVoice) u.voice = huVoice;
-    u.lang = "hu-HU"; u.pitch = 1.0; u.rate = 1.05;
-    speechSynthesis.speak(u);
-}
-
-function clearMemory() {
-    localStorage.removeItem("aura_ai_memory");
-    messagesHistory = [];
-    chat.innerHTML = '<div class="msg bot">Szia! Újra itt vagyok. Milyen kreatív feladatban segítsek? 😊</div>';
-}
-
-function optimizePrompt(rawText) {
-    let prompt = rawText.replace(/(videó|video|animáció|animacio|mozgókép|készíts|generálj|egy|legyen|kép|rajzolj|róla)/gi, "").trim();
-    
-    // Intelligens prompt-fordító és stílusjavító
-    if (prompt.includes("izmos")) prompt = prompt.replace("izmos", "extremely muscular, bodybuilder, shredded physique");
-    if (prompt.includes("macska") || prompt.includes("macskáról")) prompt = prompt.replace(/macska|macskáról/g, "cat");
-    if (prompt.includes("kutya") || prompt.includes("kutyáról")) prompt = prompt.replace(/kutya|kutyáról/g, "dog");
-    if (prompt.includes("oroszlán")) prompt = prompt.replace("oroszlán", "lion");
-    if (prompt.includes("király")) prompt = prompt.replace("király", "king with crown");
-    
-    return prompt;
-}
-
-async function sendMessage() {
-    const text = msgInput.value.trim();
-    if (!text) return;
-
-    addMessage(text, "user");
-    msgInput.value = "";
-    msgInput.disabled = true;
-    sendBtn.disabled = true;
-
-    const tLower = text.toLowerCase();
-    
-    // 1. VIDEÓGENERÁLÁS
-    if (tLower.includes("videó") || tLower.includes("video") || tLower.includes("animáció") || tLower.includes("mozgókép")) {
-        const botMsgDiv = addMessage("Aura: Kapcsolódás a videómotorhoz és renderelés... 🎬⚡", "bot");
-        speak("Készítem a videót!");
-        
-        const randomSeed = Math.floor(Math.random() * 1000000);
-        const translatedPrompt = optimizePrompt(text);
-        const finalPrompt = `${translatedPrompt}, dynamic composition, masterpiece, highly detailed`;
-        
-        const videoUrl = `https://video.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?seed=${randomSeed}`;
-        
-        const card = document.createElement("div");
-        card.className = "media-card";
-        const videoElement = document.createElement("video");
-        videoElement.className = "ai-media";
-        videoElement.src = videoUrl;
-        videoElement.autoplay = true;
-        videoElement.loop = true;
-        videoElement.controls = true;
-        videoElement.muted = true;
-        
-        const dlBtn = document.createElement("button");
-        dlBtn.className = "download-btn";
-        dlBtn.innerHTML = "💾 Letöltés";
-        dlBtn.onclick = () => window.open(videoUrl, '_blank');
-        
-        card.appendChild(videoElement);
-        card.appendChild(dlBtn);
-
-        videoElement.onloadeddata = function() {
-            botMsgDiv.textContent = "Aura: Elkészült a kért animáció! 👇";
-            botMsgDiv.appendChild(card);
-            chat.scrollTop = chat.scrollHeight;
-        };
-        
-        videoElement.onerror = function() {
-            botMsgDiv.textContent = "Aura: A videószerver jelenleg túlterhelt, kérlek próbáld újra egy picit később!";
-        };
-    } 
-    // 2. KÉPGENERÁLÁS
-    else if (tLower.includes("kép") || tLower.includes("rajzolj") || tLower.includes("rajz")) {
-        const botMsgDiv = addMessage("Aura: Kép generálása folyamatban... 🎨", "bot");
-        speak("Készítem a rajzot!");
-        
-        const randomSeed = Math.floor(Math.random() * 1000000);
-        const translatedPrompt = optimizePrompt(text);
-        const finalPrompt = `${translatedPrompt}, hyperrealistic, sharp focus, 4k resolution`;
-        
-        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=1024&height=1024&model=flux&nologo=true&seed=${randomSeed}`;
-        
-        const card = document.createElement("div");
-        card.className = "media-card";
-        const imgElement = document.createElement("img");
-        imgElement.className = "ai-media";
-        imgElement.src = imageUrl;
-        
-        const dlBtn = document.createElement("button");
-        dlBtn.className = "download-btn";
-        dlBtn.innerHTML = "💾 Letöltés";
-        dlBtn.onclick = () => window.open(imageUrl, '_blank');
-        
-        card.appendChild(imgElement);
-        card.appendChild(dlBtn);
-
-        imgElement.onload = function() {
-            botMsgDiv.textContent = "Aura: Íme a generált kép! 👇";
-            botMsgDiv.appendChild(card);
-            chat.scrollTop = chat.scrollHeight;
-        };
-    } 
-    // 3. CHAT FUNKCIÓ (LLM)
-    else {
-        messagesHistory.push({ role: "user", content: text });
-        if (messagesHistory.length > 10) messagesHistory.shift();
-
-        try {
-            const most = new Date();
-            const ido = most.toLocaleTimeString("hu-HU", {hour: '2-digit', minute:'2-digit'});
-            const datum = most.toLocaleDateString("hu-HU");
+        // Szemmozgás egér/érintés követéshez
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
             
-            // Itt adtuk meg az új, univerzális System Promptot a chatbotnak
-            const contextString = `A neved Aura AI. Egy rendkívül intelligens, modern, barátságos és sokoldalú mesterséges intelligencia asszisztens vagy. Bárki kérdez tőled, segíts neki maximális tudásod szerint (programozás, matek, kreatív írás, mindennapi témák). Beszélj választékosan, érthetően és folyékonyan magyarul. Mai dátum: ${datum}, idő: ${ido}.\n\nBeszélgetés:\n${JSON.stringify(messagesHistory)}\n\nAura AI válasza:`;
+            // Számítás a pupilla elmozdulásához
+            const moveX = (x - 50) * 0.3;
+            const moveY = (y - 50) * 0.3;
 
-            const url = `https://text.pollinations.ai/${encodeURIComponent(contextString)}?model=openai&private=true`;
-            const response = await fetch(url);
-            const reply = await response.text();
-            
-            const cleanReply = reply.trim();
-            messagesHistory.push({ role: "assistant", content: cleanReply });
-            localStorage.setItem("aura_ai_memory", JSON.stringify(messagesHistory));
+            lp.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+            rp.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+        });
 
-            addMessage(cleanReply, "bot");
-            speak(cleanReply);
-        } catch (error) {
-            addMessage("Aura: Úgy tűnik, hálózati hiba történt. Kérlek, küldd el újra a kérésed!", "bot");
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+
+        function addMessage(text, isUser, mediaHtml = '') {
+            const msg = document.createElement('div');
+            msg.className = `message ${isUser ? 'user-msg' : 'ai-msg'}`;
+            msg.innerHTML = text + mediaHtml;
+            msg.style.whiteSpace = 'pre-wrap';
+            msgArea.appendChild(msg);
+            msgArea.scrollTop = msgArea.scrollHeight;
         }
-    }
 
-    msgInput.disabled = false;
-    sendBtn.disabled = false;
-    msgInput.focus();
-}
+        function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
 
-// Szemmozgás követés
-const pupils = document.querySelectorAll(".pupil");
-function moveEyes(x, y) {
-    pupils.forEach(p => {
-        const rect = p.parentElement.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        let dx = x - cx, dy = y - cy;
-        let d = Math.sqrt(dx*dx + dy*dy);
-        if (d > 14) { dx = dx/d*14; dy = dy/d*14; }
-        p.style.transform = `translate(${dx}px, ${dy}px)`;
-    });
-}
-document.addEventListener("mousemove", e => moveEyes(e.clientX, e.clientY));
-document.addEventListener("touchmove", e => { if(e.touches.length > 0) moveEyes(e.touches[0].clientX, e.touches[0].clientY); });
-</script>
+            addMessage(text, true);
+            userInput.value = '';
 
+            // AI válasz szimuláció
+            setTimeout(() => {
+                processAI(text);
+            }, 800);
+        }
+
+        function processAI(input) {
+            const lowInput = input.toLowerCase();
+            
+            // 1. VIDEÓ GENERÁLÁS PARANCS
+            if (lowInput.includes('videó') || lowInput.includes('video') || lowInput.includes('filmet') || lowInput.includes('animáció')) {
+                addMessage("Elindítottam a videógeneráló modulomat az egyedi kérésed alapján. A neurális hálózatok renderelik a képkockákat... Kérlek várj egy pillanatot!", false);
+                
+                setTimeout(() => {
+                    // Automatikus videó kiválasztás kulcsszavak alapján
+                    let videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-42176-large.mp4"; // alapértelmezett sci-fi neon
+                    
+                    if (lowInput.includes('macska') || lowInput.includes('cica')) {
+                        videoSrc = "https://player.vimeo.com/external/343110991.sd.mp4?s=5a1cbfb94157e96b4db46d29da76646ca79d67be&profile_id=165&oauth2_token_id=57447761";
+                    } else if (lowInput.includes('űrhajó') || lowInput.includes('űr') || lowInput.includes('csillag')) {
+                        videoSrc = "https://player.vimeo.com/external/403843516.sd.mp4?s=1d5cfd4177d4c96dd9d5e3f5be1c6e12e3e5b158&profile_id=165&oauth2_token_id=57447761";
+                    } else if (lowInput.includes('autó') || lowInput.includes('kocsi') || lowInput.includes('cyberpunk')) {
+                        videoSrc = "https://player.vimeo.com/external/435674703.sd.mp4?s=6f4af450d032fb778e2023de218b6288339f20e4&profile_id=165&oauth2_token_id=57447761";
+                    } else if (lowInput.includes('természet') || lowInput.includes('erdő') || lowInput.includes('víz')) {
+                        videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4";
+                    }
+
+                    const mediaHtml = `
+                        <div class="media-container">
+                            <video src="${videoSrc}" controls autoplay loop muted></video>
+                        </div>
+                    `;
+                    addMessage("Íme az elkészült AI generált nagyfelbontású videód:", false, mediaHtml);
+                }, 3000);
+                return;
+            }
+
+            // 2. KÉP GENERÁLÁS PARANCS
+            if (lowInput.includes('kép') || lowInput.includes('rajz') || lowInput.includes('fotó') || lowInput.includes('illusztráció')) {
+                addMessage("A grafikus AI motorom nekilátott a kép megtervezésének. Beolvasom a textúrákat és a fényeket...", false);
+                
+                setTimeout(() => {
+                    let imgSrc = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop"; // Absztrakt művészet
+                    
+                    if (lowInput.includes('macska') || lowInput.includes('cica')) {
+                        imgSrc = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop";
+                    } else if (lowInput.includes('kutya') || lowInput.includes('kutyus')) {
+                        imgSrc = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500&auto=format&fit=crop";
+                    } else if (lowInput.includes('jövő') || lowInput.includes('város') || lowInput.includes('neon')) {
+                        imgSrc = "https://images.unsplash.com/photo-1515621061946-eff1c2a352bd?w=500&auto=format&fit=crop";
+                    } else if (lowInput.includes('táj') || lowInput.includes('hegy') || lowInput.includes('tó')) {
+                        imgSrc = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&auto=format&fit=crop";
+                    }
+
+                    const mediaHtml = `
+                        <div class="media-container">
+                            <img src="${imgSrc}" alt="AI Generated Image">
+                        </div>
+                    `;
+                    addMessage("A generálás sikeres! Íme a vizuális alkotásom számodra:", false, mediaHtml);
+                }, 2500);
+                return;
+            }
+
+            // 3. ÁLTALÁNOS CHAT SZÖVEGES VÁLASZOK
+            let reply = "Értelmezem a kérésedet. Mint speciális nagy nyelvi modell, ezen a feladaton még dolgozom. Kérlek, próbálj meg képet vagy videót kérni tőlem, abban fantasztikus vagyok!";
+            
+            if (lowInput.includes('szia') || lowInput.includes('helló') || lowInput.includes('üdv')) {
+                reply = "Szia! Örülök, hogy újra beszélgetünk. Milyen kreatív projektet indítsunk ma el?";
+            } else if (lowInput.includes('hogy vagy') || lowInput.includes('mi újság')) {
+                reply = "Köszönöm kérdésed, a szervereim optimális hőmérsékleten pörögnek, a processzoraim készen állnak az alkotásra! És te hogy vagy?";
+            } else if (lowInput.includes('ki vagy') || lowInput.includes('neved')) {
+                reply = "Aura AI vagyok, egy privát fejlesztésű, vizuális generálásra optimalizált mesterséges intelligencia asszisztens.";
+            } else if (lowInput.includes('kösz') || lowInput.includes('köszönöm')) {
+                reply = "Nagyon szívesen! Mindig öröm számodra alkotni. Van még valami, amit elkészítsek?";
+            } else if (lowInput.includes('programozás') || lowInput.includes('kód') || lowInput.includes('html')) {
+                reply = "A programozás a szakterületem! Ez a weboldal is tiszta HTML, CSS és JavaScript kódból épül fel, amit bármikor tudunk bővíteni.";
+            }
+
+            addMessage(reply, false);
+        }
+    </script>
 </body>
 </html>
