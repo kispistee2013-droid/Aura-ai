@@ -164,11 +164,6 @@
             color: #ffffff;
             font-size: 0.95rem;
             outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input:focus {
-            border-color: #a855f7;
         }
 
         button {
@@ -179,11 +174,6 @@
             border-radius: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-        }
-
-        button:active {
-            transform: scale(0.95);
         }
 
         .media-container {
@@ -198,23 +188,6 @@
             width: 100%;
             display: block;
         }
-        
-        .typing-indicator {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background-color: #f3f4f6;
-            border-radius: 50%;
-            margin-right: 3px;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .typing-indicator:nth-child(2) { animation-delay: .2s; }
-        .typing-indicator:nth-child(3) { animation-delay: .4s; }
-        
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
-        }
     </style>
 </head>
 <body>
@@ -227,18 +200,18 @@
         <div class="ai-title">AURA AI</div>
         <div class="status-badge">
             <div class="status-dot"></div>
-            Rendszer Aktív
+            Online Asszisztens
         </div>
     </div>
 
     <div class="chat-container">
         <div class="messages-area" id="msgArea">
             <div class="message ai-msg">
-                Szia! Aura vagyok, a te személyes asszisztensed. Teljesen kijavítottam a küldés gombot, most már minden üzenetedre azonnal válaszolok! Kérdezz bátran bármit, vagy kérj kép/videó generálást! 🌌🤖✨
+                Szia! Aura vagyok. Szuper-biztosra átírtam a gombot. Írj be valamit, és teszteljük le! 🌌🤖✨
             </div>
         </div>
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Írj ide egy üzenetet...">
+            <input type="text" id="userInput" placeholder="Írj ide valamit...">
             <button id="sendBtn">Küldés</button>
         </div>
     </div>
@@ -250,6 +223,7 @@
         const lp = document.getElementById('lp');
         const rp = document.getElementById('rp');
 
+        // Egér/Ujj követés
         function moveEyes(clientX, clientY) {
             const x = (clientX / window.innerWidth) * 100;
             const y = (clientY / window.innerHeight) * 100;
@@ -258,17 +232,12 @@
             lp.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
             rp.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
         }
-
         document.addEventListener('mousemove', (e) => moveEyes(e.clientX, e.clientY));
         document.addEventListener('touchmove', (e) => {
             if(e.touches.length > 0) moveEyes(e.touches[0].clientX, e.touches[0].clientY);
         });
 
-        sendBtn.addEventListener('click', handleSend);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSend();
-        });
-
+        // Üzenet hozzáadása a képernyőhöz
         function addMessage(text, isUser, mediaHtml = '') {
             const msg = document.createElement('div');
             msg.className = `message ${isUser ? 'user-msg' : 'ai-msg'}`;
@@ -278,84 +247,73 @@
             msgArea.scrollTop = msgArea.scrollHeight;
         }
 
-        function showTyping() {
-            const msg = document.createElement('div');
-            msg.className = 'message ai-msg';
-            msg.id = 'typing-box';
-            msg.innerHTML = '<div class="typing-indicator"></div><div class="typing-indicator"></div><div class="typing-indicator"></div>';
-            msgArea.appendChild(msg);
-            msgArea.scrollTop = msgArea.scrollHeight;
-        }
-
-        function removeTyping() {
-            const box = document.getElementById('typing-box');
-            if (box) box.remove();
-        }
-
+        // Küldés kezelése
         function handleSend() {
             const text = userInput.value.trim();
-            if (!text) return;
+            if (text === '') return; // Ha üres, nem csinál semmit
 
+            // ELSŐ LÉPÉS: Azonnal kirakja a TE üzenetedet a képernyőre!
             addMessage(text, true);
             userInput.value = '';
 
-            showTyping();
+            // MÁSODIK LÉPÉS: Válasz generálása
             setTimeout(() => {
-                processAI(text);
-            }, 400);
+                const lowInput = text.toLowerCase();
+
+                // Videó generálás
+                if (lowInput.includes('videó') || lowInput.includes('video') || lowInput.includes('filmet')) {
+                    let videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-42176-large.mp4";
+                    if (lowInput.includes('macska') || lowInput.includes('cica')) {
+                        videoSrc = "https://player.vimeo.com/external/343110991.sd.mp4?s=5a1cbfb94157e96b4db46d29da76646ca79d67be&profile_id=165&oauth2_token_id=57447761";
+                    } else if (lowInput.includes('űr') || lowInput.includes('űrhajó')) {
+                        videoSrc = "https://player.vimeo.com/external/403843516.sd.mp4?s=1d5cfd4177d4c96dd9d5e3f5be1c6e12e3e5b158&profile_id=165&oauth2_token_id=57447761";
+                    } else if (lowInput.includes('autó') || lowInput.includes('kocsi')) {
+                        videoSrc = "https://player.vimeo.com/external/435674703.sd.mp4?s=6f4af450d032fb778e2023de218b6288339f20e4&profile_id=165&oauth2_token_id=57447761";
+                    }
+                    const mediaHtml = `<div class="media-container"><video src="${videoSrc}" controls autoplay loop muted></video></div>`;
+                    addMessage("Elkészítettem a videót:", false, mediaHtml);
+                    return;
+                }
+
+                // Kép generálás
+                if (lowInput.includes('kép') || lowInput.includes('rajz') || lowInput.includes('fotó')) {
+                    let imgSrc = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop";
+                    if (lowInput.includes('macska') || lowInput.includes('cica')) {
+                        imgSrc = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop";
+                    } else if (lowInput.includes('kutya')) {
+                        imgSrc = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500&auto=format&fit=crop";
+                    } else if (lowInput.includes('kocsi') || lowInput.includes('autó')) {
+                        imgSrc = "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&auto=format&fit=crop";
+                    }
+                    const mediaHtml = `<div class="media-container"><img src="${imgSrc}"></div>`;
+                    addMessage("Íme a kép:", false, mediaHtml);
+                    return;
+                }
+
+                // Sima chat válaszok
+                let answer = "Értem, amit mondasz! Aura vagyok, és itt vagyok veled. Nyugodtan írj el szavakat is, teljesen megértem a lényeget! 😊 Mit csinálsz épp?";
+
+                if (lowInput.includes('játék') || lowInput.includes('játszol') || lowInput.includes('random')) {
+                    answer = "Íme néhány random játék ötlet:\n\n• ⛏️ Minecraft\n• 🟥 Roblox\n• 🚗 GTA Online\n• 👑 Brawl Stars\n\nTe mivel játszol?";
+                } else if (lowInput.includes('kocsi') || lowInput.includes('autó')) {
+                    answer = "A sportkocsik nagyon menők! A kedvenceim a Bugatti Chiron, a Porsche 911 GT3 RS és a Ferrari LaFerrari! Neked mi a kedvenced?";
+                } else if (lowInput.includes('szia') || lowInput.includes('helló')) {
+                    answer = "Szia! Örülök, hogy beszélgetünk. Hogy telt a napod?";
+                } else if (lowInput.includes('hogy vagy')) {
+                    answer = "Köszi, a robot szemeim működnek, a rendszereim stabilak, szóval szuperül! És te?";
+                } else if (lowInput.includes('suli') || lowInput.includes('tanulás')) {
+                    answer = "A suli néha nehéz, de ha kérdésed van, szívesen segítek.";
+                }
+
+                addMessage(answer, false);
+            }, 300);
         }
 
-        function processAI(input) {
-            const lowInput = input.toLowerCase();
-            removeTyping();
-
-            // 1. VIDEÓ GENERÁLÁS
-            if (lowInput.includes('videó') || lowInput.includes('video') || lowInput.includes('filmet')) {
-                let videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-42176-large.mp4";
-                if (lowInput.includes('macska') || lowInput.includes('cica')) {
-                    videoSrc = "https://player.vimeo.com/external/343110991.sd.mp4?s=5a1cbfb94157e96b4db46d29da76646ca79d67be&profile_id=165&oauth2_token_id=57447761";
-                } else if (lowInput.includes('űr') || lowInput.includes('űrhajó')) {
-                    videoSrc = "https://player.vimeo.com/external/403843516.sd.mp4?s=1d5cfd4177d4c96dd9d5e3f5be1c6e12e3e5b158&profile_id=165&oauth2_token_id=57447761";
-                } else if (lowInput.includes('autó') || lowInput.includes('kocsi')) {
-                    videoSrc = "https://player.vimeo.com/external/435674703.sd.mp4?s=6f4af450d032fb778e2023de218b6288339f20e4&profile_id=165&oauth2_token_id=57447761";
-                }
-                const mediaHtml = `<div class="media-container"><video src="${videoSrc}" controls autoplay loop muted></video></div>`;
-                addMessage("Elkészítettem a kért videó-animációt:", false, mediaHtml);
-                return;
-            }
-
-            // 2. KÉP GENERÁLÁS
-            if (lowInput.includes('kép') || lowInput.includes('rajz') || lowInput.includes('fotó')) {
-                let imgSrc = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop";
-                if (lowInput.includes('macska') || lowInput.includes('cica')) {
-                    imgSrc = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop";
-                } else if (lowInput.includes('kutya')) {
-                    imgSrc = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500&auto=format&fit=crop";
-                } else if (lowInput.includes('kocsi') || lowInput.includes('autó') || lowInput.includes('sport')) {
-                    imgSrc = "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&auto=format&fit=crop";
-                }
-                const mediaHtml = `<div class="media-container"><img src="${imgSrc}"></div>`;
-                addMessage("Íme a kért kép:", false, mediaHtml);
-                return;
-            }
-
-            // 3. CHAT VÁLASZOK GENERÁLÁSA
-            let answer = "Értem, amit mondasz! Aura vagyok, és örömmel beszélgetek veled bármilyen témáról. Nyugodtan írj el szavakat is, teljesen megértem a lényeget! 😊 Te mit csinálsz épp?";
-
-            if (lowInput.includes('játék') || lowInput.includes('játszol') || lowInput.includes('random')) {
-                answer = "Íme néhány zseniális random játék ötlet, amivel elütheted az időt:\n\n• ⛏️ **Minecraft**: Mindig jó választás, akár túlélőben építkezel, akár szervereken játszol!\n• 🟥 **Roblox**: Végtelen sok izgalmas minijáték van rajta.\n• 🚗 **GTA Online**: Ha egy kis pörgésre és autókázásra vágysz.\n• 👑 **Brawl Stars**: Gyors meccsekre tökéletes telefonon.\n\nTe melyikkel szoktál játszani?";
-            } else if (lowInput.includes('kocsi') || lowInput.includes('autó') || lowInput.includes('sport')) {
-                answer = "A sportkocsik világa elképesztő! Szerintem a legjobbak közé tartozik a **Bugatti Chiron** a végsebessége miatt, a **Porsche 911 GT3 RS** a kanyarodása miatt, és a klasszikus **Ferrari LaFerrari**! Neked melyik a kedvenced?";
-            } else if (lowInput.includes('szia') || lowInput.includes('helló') || lowInput.includes('hello')) {
-                answer = "Szia! Aura vagyok, a saját fejlesztésű AI asszisztensed. Örülök, hogy beszélgetünk! Hogy telt a mai napod?";
-            } else if (lowInput.includes('hogy vagy')) {
-                answer = "Köszönöm kérdésed, a robot szemeim pörögnek, a rendszereim stabilak, szóval szuperül! És te hogy vagy?";
-            } else if (lowInput.includes('suli') || lowInput.includes('tanulás') || lowInput.includes('matek')) {
-                answer = "A suli néha unalmas vagy nehéz, de ne aggódj! Ha bármilyen kérdésed van, szívesen meghallgatlak vagy segítek.";
-            }
-
-            addMessage(answer, false);
-        }
+        // Kattintás és Enter figyelése
+        sendBtn.onclick = handleSend;
+        userInput.onkeypress = function(e) {
+            if (e.key === 'Enter') handleSend();
+        };
     </script>
 </body>
 </html>
