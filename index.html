@@ -250,7 +250,6 @@
         const lp = document.getElementById('lp');
         const rp = document.getElementById('rp');
 
-        // Szemek követése (egér és ujj is)
         function moveEyes(clientX, clientY) {
             const x = (clientX / window.innerWidth) * 100;
             const y = (clientY / window.innerHeight) * 100;
@@ -307,7 +306,6 @@
         async function processAI(input) {
             const lowInput = input.toLowerCase();
 
-            // 1. VIDEÓ GENERÁLÁSI LOGIKA (Beágyazott minták)
             if (lowInput.includes('videó') || lowInput.includes('video') || lowInput.includes('filmet')) {
                 removeTyping();
                 let videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-42176-large.mp4";
@@ -323,10 +321,8 @@
                 return;
             }
 
-            // 2. KÉP GENERÁLÁSI LOGIKA (Valódi Pollinations AI képalkotás!)
             if (lowInput.includes('kép') || lowInput.includes('rajz') || lowInput.includes('fotó') || lowInput.includes('generálj')) {
                 removeTyping();
-                // Kivesszük a kulcsszavakat, hogy tiszta promptot kapjunk az angol/magyar AI-nak
                 let prompt = input.replace(/(generálj|kép|rajz|fotó|egy|itt|vagy|mutass)/gi, '').trim();
                 if(!prompt) prompt = "cyberpunk robot aura neon glowing light";
                 
@@ -338,9 +334,7 @@
                 return;
             }
 
-            // 3. VALÓDI ÉLŐ CHAT VÁLASZOK (Pollinations Text API)
             try {
-                // Elküldjük a Pollinations AI-nak az üzenetet egy rendszer-utasítással, hogy magyarul beszéljen
                 const systemPrompt = "Te Aura AI vagy, egy dögös kinézetű robot asszisztens. Beszélj mindig magyarul, légy kedves, fiatalos, használj emojikat és válaszolj röviden, barátságosan.";
                 const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(input)}?system=${encodeURIComponent(systemPrompt)}`);
                 
@@ -351,7 +345,6 @@
                 addMessage(aiResponseText, false);
                 
             } catch (error) {
-                // Biztonsági tartalék válasz hálózati hiba esetére
                 removeTyping();
                 addMessage("Szia! Kicsit leterhelt a hálózatom, de itt vagyok! Mit szeretnél tesztelni? 😊", false);
             }
