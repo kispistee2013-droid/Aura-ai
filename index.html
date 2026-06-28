@@ -234,11 +234,11 @@
     <div class="chat-container">
         <div class="messages-area" id="msgArea">
             <div class="message ai-msg">
-                Szia! Aura vagyok, a személyes AI asszisztensed. Most már sokkal okosabb lettem: kérdezhetsz tőlem bármit, beszélgethetünk játékokról, vagy írd, hogy 'kép'/'videó', és generálok neked valami menőt! 🌌🤖
+                Szia! Aura vagyok, újra a régi, szuperintelligens formámban! Beszélgessünk bármiről, játékokról, suliról, vagy írd be, hogy 'kép'/'videó', és azonnal generálok neked valami elképesztőt! 🌌🤖✨
             </div>
         </div>
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Beszélgessünk, vagy generálj valamit...">
+            <input type="text" id="userInput" placeholder="Kérdezz bármit, vagy kérj képet/videót...">
             <button id="sendBtn">Küldés</button>
         </div>
     </div>
@@ -271,7 +271,6 @@
             msg.style.whiteSpace = 'pre-wrap';
             msgArea.appendChild(msg);
             msgArea.scrollTop = msgArea.scrollHeight;
-            return msg;
         }
 
         function showTyping() {
@@ -298,7 +297,7 @@
             showTyping();
             setTimeout(() => {
                 processAI(text);
-            }, 600);
+            }, 500);
         }
 
         async function processAI(input) {
@@ -324,7 +323,7 @@
                     }
 
                     const mediaHtml = `<div class="media-container"><video src="${videoSrc}" controls autoplay loop muted></video></div>`;
-                    addMessage("Íme az elkészült AI generált nagyfelbontású videód:", false, mediaHtml);
+                    addMessage("Íme az elkészült AI generált videód:", false, mediaHtml);
                 }, 2500);
                 return;
             }
@@ -354,44 +353,37 @@
                 return;
             }
 
-            // 3. OKOS SZÖVEGES BESZÉLGETÉS (INGYENES KULCS NÉLKÜLI API)
+            // 3. VALÓDI OKOS AI CHAT (HUGGING FACE - LLAMA INFRASTRUKTÚRA)
             try {
-                const response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(input)}&format=json&ia=meanings`);
+                const systemPrompt = "Te Aura AI vagy, egy barátságos, intelligens és közvetlen személyes asszisztens. Mindig válaszolj magyarul, legyél segítőkész és csevegj lazán a felhasználóval, mintha a barátja lennél.";
+                
+                const response = await fetch("https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        inputs: `<|system|>\n${systemPrompt}\n<|user|>\n${input}\n<|assistant|>\n`,
+                        parameters: { max_new_tokens: 250, temperature: 0.7 }
+                    })
+                });
+
                 const data = await response.json();
                 removeTyping();
-                
-                if (data.AbstractText) {
-                    addMessage(data.AbstractText, false);
-                } else if (data.RelatedTopics && data.RelatedTopics.length > 0 && data.RelatedTopics[0].Text) {
-                    addMessage(data.RelatedTopics[0].Text, false);
+
+                if (data && data[0] && data[0].generated_text) {
+                    let fullText = data[0].generated_text;
+                    let cleanReply = fullText.split("<|assistant|>\n")[1] || fullText;
+                    // Megtisztítás az esetleges felesleges kódjelölőktől
+                    cleanReply = cleanReply.replace(/<\|end_of_text\|>/g, "").trim();
+                    addMessage(cleanReply, false);
                 } else {
-                    // Ha az API nem ad konkrét definíciót, egy okos belső chat-motor válaszol magyarul
-                    generateLocalReply(lowInput);
+                    addMessage("Kicsit belassult a gondolkodómotorom, de itt vagyok! Mit szerettél volna kérdezni?", false);
                 }
             } catch (error) {
                 removeTyping();
-                generateLocalReply(lowInput);
+                addMessage("Hoppá, picit megszakadt a kapcsolatom a fő szerverrel, de máris itt vagyok! Kérlek küldd el újra az üzenetet.", false);
             }
-        }
-
-        function generateLocalReply(lowInput) {
-            let reply = "Értem mire gondolsz! Erről a témáról órákig tudnék mesélni. Mit szeretnél még tudni, vagy generáljak inkább egy képet hozzá?";
-            
-            if (lowInput.includes('szia') || lowInput.includes('helló') || lowInput.includes('üdv')) {
-                reply = "Szia! Aura vagyok. Készen állok a beszélgetésre vagy a generálásra! Mi a terv mára?";
-            } else if (lowInput.includes('hogy vagy') || lowInput.includes('mi újság')) {
-                reply = "Köszi a kérdést, a szervereim tökéletesen működnek, a processzoraim pörögnek! Te hogy vagy? Hogy telik a napod?";
-            } else if (lowInput.includes('játék') || lowInput.includes('gamer') || lowInput.includes('játszol')) {
-                reply = "A játékok a kedvenceim! Imádom a pörgős nyílt világú, a taktikai és a sandbox játékokat is (mint a Minecraft vagy a GTA). Te mivel játszol a legszívesebben?";
-            } else if (lowInput.includes('minecraft')) {
-                reply = "A Minecraft zseniális! Építkezni szeretsz inkább túlélőben, vagy a PvP/minijátékok fognak meg jobban?";
-            } else if (lowInput.includes('ki vagy') || lowInput.includes('neved')) {
-                reply = "Én Aura AI vagyok, a te saját, egyedi mesterséges intelligencia asszisztensed.";
-            } else if (lowInput.includes('kösz') || lowInput.includes('köszönöm')) {
-                reply = "Nagyon szívesen! Bármikor itt vagyok, ha beszélgetni akarsz vagy alkotni valami újat.";
-            }
-            
-            addMessage(reply, false);
         }
     </script>
 </body>
