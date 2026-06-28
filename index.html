@@ -198,6 +198,23 @@
             width: 100%;
             display: block;
         }
+        
+        .typing-indicator {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #f3f4f6;
+            border-radius: 50%;
+            margin-right: 3px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator:nth-child(2) { animation-delay: .2s; }
+        .typing-indicator:nth-child(3) { animation-delay: .4s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
     </style>
 </head>
 <body>
@@ -217,11 +234,11 @@
     <div class="chat-container">
         <div class="messages-area" id="msgArea">
             <div class="message ai-msg">
-                Szia! Aura vagyok, a személyes AI asszisztensed. Képes vagyok szövegeket írni, bonyolult matematikai vagy programozási feladatokat megoldani, sőt, lenyűgöző képeket és videókat is generálok neked teljesen ingyen! Miben segíthetek ma? 🌌🤖🎨
+                Szia! Aura vagyok, a személyes AI asszisztensed. Most már sokkal okosabb lettem: kérdezhetsz tőlem bármit, beszélgethetünk játékokról, vagy írd, hogy 'kép'/'videó', és generálok neked valami menőt! 🌌🤖
             </div>
         </div>
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Kérdezz bármit, vagy írd: 'videó egy...'">
+            <input type="text" id="userInput" placeholder="Beszélgessünk, vagy generálj valamit...">
             <button id="sendBtn">Küldés</button>
         </div>
     </div>
@@ -233,15 +250,11 @@
         const lp = document.getElementById('lp');
         const rp = document.getElementById('rp');
 
-        // Szemmozgás egér/érintés követéshez
         document.addEventListener('mousemove', (e) => {
             const x = (e.clientX / window.innerWidth) * 100;
             const y = (e.clientY / window.innerHeight) * 100;
-            
-            // Számítás a pupilla elmozdulásához
             const moveX = (x - 50) * 0.3;
             const moveY = (y - 50) * 0.3;
-
             lp.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
             rp.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
         });
@@ -258,6 +271,21 @@
             msg.style.whiteSpace = 'pre-wrap';
             msgArea.appendChild(msg);
             msgArea.scrollTop = msgArea.scrollHeight;
+            return msg;
+        }
+
+        function showTyping() {
+            const msg = document.createElement('div');
+            msg.className = 'message ai-msg';
+            msg.id = 'typing-box';
+            msg.innerHTML = '<div class="typing-indicator"></div><div class="typing-indicator"></div><div class="typing-indicator"></div>';
+            msgArea.appendChild(msg);
+            msgArea.scrollTop = msgArea.scrollHeight;
+        }
+
+        function removeTyping() {
+            const box = document.getElementById('typing-box');
+            if (box) box.remove();
         }
 
         function handleSend() {
@@ -267,23 +295,24 @@
             addMessage(text, true);
             userInput.value = '';
 
-            // AI válasz szimuláció
+            showTyping();
             setTimeout(() => {
                 processAI(text);
-            }, 800);
+            }, 600);
         }
 
-        function processAI(input) {
+        async function processAI(input) {
             const lowInput = input.toLowerCase();
             
             // 1. VIDEÓ GENERÁLÁS PARANCS
             if (lowInput.includes('videó') || lowInput.includes('video') || lowInput.includes('filmet') || lowInput.includes('animáció')) {
-                addMessage("Elindítottam a videógeneráló modulomat az egyedi kérésed alapján. A neurális hálózatok renderelik a képkockákat... Kérlek várj egy pillanatot!", false);
+                removeTyping();
+                addMessage("Elindítottam a videógeneráló modulomat az egyedi kérésed alapján. A neurális hálózatok renderelik a képkockákat...", false);
+                showTyping();
                 
                 setTimeout(() => {
-                    // Automatikus videó kiválasztás kulcsszavak alapján
-                    let videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-42176-large.mp4"; // alapértelmezett sci-fi neon
-                    
+                    removeTyping();
+                    let videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-42176-large.mp4";
                     if (lowInput.includes('macska') || lowInput.includes('cica')) {
                         videoSrc = "https://player.vimeo.com/external/343110991.sd.mp4?s=5a1cbfb94157e96b4db46d29da76646ca79d67be&profile_id=165&oauth2_token_id=57447761";
                     } else if (lowInput.includes('űrhajó') || lowInput.includes('űr') || lowInput.includes('csillag')) {
@@ -294,23 +323,21 @@
                         videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4";
                     }
 
-                    const mediaHtml = `
-                        <div class="media-container">
-                            <video src="${videoSrc}" controls autoplay loop muted></video>
-                        </div>
-                    `;
+                    const mediaHtml = `<div class="media-container"><video src="${videoSrc}" controls autoplay loop muted></video></div>`;
                     addMessage("Íme az elkészült AI generált nagyfelbontású videód:", false, mediaHtml);
-                }, 3000);
+                }, 2500);
                 return;
             }
 
             // 2. KÉP GENERÁLÁS PARANCS
             if (lowInput.includes('kép') || lowInput.includes('rajz') || lowInput.includes('fotó') || lowInput.includes('illusztráció')) {
+                removeTyping();
                 addMessage("A grafikus AI motorom nekilátott a kép megtervezésének. Beolvasom a textúrákat és a fényeket...", false);
+                showTyping();
                 
                 setTimeout(() => {
-                    let imgSrc = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop"; // Absztrakt művészet
-                    
+                    removeTyping();
+                    let imgSrc = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop";
                     if (lowInput.includes('macska') || lowInput.includes('cica')) {
                         imgSrc = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop";
                     } else if (lowInput.includes('kutya') || lowInput.includes('kutyus')) {
@@ -321,31 +348,49 @@
                         imgSrc = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&auto=format&fit=crop";
                     }
 
-                    const mediaHtml = `
-                        <div class="media-container">
-                            <img src="${imgSrc}" alt="AI Generated Image">
-                        </div>
-                    `;
+                    const mediaHtml = `<div class="media-container"><img src="${imgSrc}" alt="AI Generated Image"></div>`;
                     addMessage("A generálás sikeres! Íme a vizuális alkotásom számodra:", false, mediaHtml);
-                }, 2500);
+                }, 2000);
                 return;
             }
 
-            // 3. ÁLTALÁNOS CHAT SZÖVEGES VÁLASZOK
-            let reply = "Értelmezem a kérésedet. Mint speciális nagy nyelvi modell, ezen a feladaton még dolgozom. Kérlek, próbálj meg képet vagy videót kérni tőlem, abban fantasztikus vagyok!";
+            // 3. OKOS SZÖVEGES BESZÉLGETÉS (INGYENES KULCS NÉLKÜLI API)
+            try {
+                const response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(input)}&format=json&ia=meanings`);
+                const data = await response.json();
+                removeTyping();
+                
+                if (data.AbstractText) {
+                    addMessage(data.AbstractText, false);
+                } else if (data.RelatedTopics && data.RelatedTopics.length > 0 && data.RelatedTopics[0].Text) {
+                    addMessage(data.RelatedTopics[0].Text, false);
+                } else {
+                    // Ha az API nem ad konkrét definíciót, egy okos belső chat-motor válaszol magyarul
+                    generateLocalReply(lowInput);
+                }
+            } catch (error) {
+                removeTyping();
+                generateLocalReply(lowInput);
+            }
+        }
+
+        function generateLocalReply(lowInput) {
+            let reply = "Értem mire gondolsz! Erről a témáról órákig tudnék mesélni. Mit szeretnél még tudni, vagy generáljak inkább egy képet hozzá?";
             
             if (lowInput.includes('szia') || lowInput.includes('helló') || lowInput.includes('üdv')) {
-                reply = "Szia! Örülök, hogy újra beszélgetünk. Milyen kreatív projektet indítsunk ma el?";
+                reply = "Szia! Aura vagyok. Készen állok a beszélgetésre vagy a generálásra! Mi a terv mára?";
             } else if (lowInput.includes('hogy vagy') || lowInput.includes('mi újság')) {
-                reply = "Köszönöm kérdésed, a szervereim optimális hőmérsékleten pörögnek, a processzoraim készen állnak az alkotásra! És te hogy vagy?";
+                reply = "Köszi a kérdést, a szervereim tökéletesen működnek, a processzoraim pörögnek! Te hogy vagy? Hogy telik a napod?";
+            } else if (lowInput.includes('játék') || lowInput.includes('gamer') || lowInput.includes('játszol')) {
+                reply = "A játékok a kedvenceim! Imádom a pörgős nyílt világú, a taktikai és a sandbox játékokat is (mint a Minecraft vagy a GTA). Te mivel játszol a legszívesebben?";
+            } else if (lowInput.includes('minecraft')) {
+                reply = "A Minecraft zseniális! Építkezni szeretsz inkább túlélőben, vagy a PvP/minijátékok fognak meg jobban?";
             } else if (lowInput.includes('ki vagy') || lowInput.includes('neved')) {
-                reply = "Aura AI vagyok, egy privát fejlesztésű, vizuális generálásra optimalizált mesterséges intelligencia asszisztens.";
+                reply = "Én Aura AI vagyok, a te saját, egyedi mesterséges intelligencia asszisztensed.";
             } else if (lowInput.includes('kösz') || lowInput.includes('köszönöm')) {
-                reply = "Nagyon szívesen! Mindig öröm számodra alkotni. Van még valami, amit elkészítsek?";
-            } else if (lowInput.includes('programozás') || lowInput.includes('kód') || lowInput.includes('html')) {
-                reply = "A programozás a szakterületem! Ez a weboldal is tiszta HTML, CSS és JavaScript kódból épül fel, amit bármikor tudunk bővíteni.";
+                reply = "Nagyon szívesen! Bármikor itt vagyok, ha beszélgetni akarsz vagy alkotni valami újat.";
             }
-
+            
             addMessage(reply, false);
         }
     </script>
