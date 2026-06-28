@@ -56,7 +56,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             border: 4px solid #a855f7;
-            transition: all 0.2s ease;
+            transition: all 0.1s ease;
         }
 
         @keyframes blink {
@@ -227,18 +227,18 @@
         <div class="ai-title">AURA AI</div>
         <div class="status-badge">
             <div class="status-dot"></div>
-            Kapcsolat frissítve
+            Összekötetés Online
         </div>
     </div>
 
     <div class="chat-container">
         <div class="messages-area" id="msgArea">
             <div class="message ai-msg">
-                Szia! Aura vagyok, a te személyes asszisztensed. Kijavítottam az agyamat, így most már rendesen figyelek minden szavadra, és nem értelek félre! Nyugodtan írj el szavakat is, megértem. Kérdezz bármit! 🌌🤖✨
+                Szia! Aura vagyok, a te személyes asszisztensed. Megtartottam a dögös robot szemeimet! Írj be bármit, vagy kérj tőlem kép/videó generálást a szövegedben (pl. "generálj egy képet egy macskáról" vagy "mutass egy autós videót"). 🌌🤖✨
             </div>
         </div>
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Kérdezz bármit magyarul...">
+            <input type="text" id="userInput" placeholder="Kérdezz bármit, vagy kérj képet/videót...">
             <button id="sendBtn">Küldés</button>
         </div>
     </div>
@@ -250,13 +250,19 @@
         const lp = document.getElementById('lp');
         const rp = document.getElementById('rp');
 
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth) * 100;
-            const y = (e.clientY / window.innerHeight) * 100;
+        // Robot szemek egérkövetése mobilra és PC-re is
+        function moveEyes(clientX, clientY) {
+            const x = (clientX / window.innerWidth) * 100;
+            const y = (clientY / window.innerHeight) * 100;
             const moveX = (x - 50) * 0.3;
             const moveY = (y - 50) * 0.3;
             lp.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
             rp.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+        }
+
+        document.addEventListener('mousemove', (e) => moveEyes(e.clientX, e.clientY));
+        document.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) moveEyes(e.touches[0].clientX, e.touches[0].clientY);
         });
 
         sendBtn.addEventListener('click', handleSend);
@@ -297,53 +303,15 @@
             showTyping();
             setTimeout(() => {
                 processAI(text);
-            }, 300);
+            }, 400);
         }
 
-        async function processAI(input) {
+        function processAI(input) {
             const lowInput = input.toLowerCase();
-            
-            // KÉP GENERÁLÁS PARANCS
-            if (lowInput.includes('kép') || lowInput.includes('rajz') || lowInput.includes('fotó')) {
-                removeTyping();
-                let imgSrc = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop";
+            removeTyping();
+
+            // 1. VIDEÓ GENERÁLÓ LOGIKA
+            if (lowInput.includes('videó') || lowInput.includes('video') || lowInput.includes('filmet')) {
+                let videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-42176-large.mp4";
                 if (lowInput.includes('macska') || lowInput.includes('cica')) {
-                    imgSrc = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop";
-                } else if (lowInput.includes('kutya')) {
-                    imgSrc = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500&auto=format&fit=crop";
-                } else if (lowInput.includes('kocsi') || lowInput.includes('autó')) {
-                    imgSrc = "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&auto=format&fit=crop";
-                }
-                const mediaHtml = `<div class="media-container"><img src="${imgSrc}"></div>`;
-                addMessage("Íme az elkészült alkotásom számodra:", false, mediaHtml);
-                return;
-            }
-
-            // STABILIZÁLT, KÖZVETLEN MEGHÍVÁS - TEXT FORMÁTUMBAN
-            try {
-                // Szigorú utasítás, hogy ki ő és hogyan kell viselkednie
-                const systemPrompt = "Te Aura AI vagy, egy barátságos, laza és szuperintelligens személyes asszisztens. Mindig válaszolj normális, folyékony magyar nyelven! Ha a felhasználó elírja a szavakat, ne javítgasd ki, hanem értsd meg a lényeget és válaszolj magára a kérdésre/felvetésre barátiasan! Bármilyen témáról (kocsik, játékok, suli) tudj értelmesen beszélgetni.";
-                
-                // Összerakjuk neki tisztán, hogy mit kell feldolgoznia
-                const finalPrompt = `${systemPrompt}\n\nFelhasználó üzenete: ${input}\n\nAura AI válasza magyarul:`;
-
-                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(finalPrompt)}?model=openai`);
-
-                if (!response.ok) throw new Error("Hiba");
-
-                const replyText = await response.text();
-                removeTyping();
-
-                if (replyText && replyText.trim().length > 0) {
-                    addMessage(replyText.trim(), false);
-                } else {
-                    addMessage("Szia! Ezt most nem sikerült teljesen feldolgoznom, megkérdeznéd esetleg máshogy?", false);
-                }
-            } catch (error) {
-                removeTyping();
-                addMessage("Pici hiba történt a rendszeremben, küldd el kérlek újra!", false);
-            }
-        }
-    </script>
-</body>
-</html>
+                    videoSrc = "
