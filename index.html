@@ -227,18 +227,18 @@
         <div class="ai-title">AURA AI</div>
         <div class="status-badge">
             <div class="status-dot"></div>
-            Összekötetés Online
+            Rendszer Aktív
         </div>
     </div>
 
     <div class="chat-container">
         <div class="messages-area" id="msgArea">
             <div class="message ai-msg">
-                Szia! Aura vagyok, a te személyes asszisztensed. Megtartottam a dögös robot szemeimet! Írj be bármit, vagy kérj tőlem kép/videó generálást a szövegedben (pl. "generálj egy képet egy macskáról" vagy "mutass egy autós videót"). 🌌🤖✨
+                Szia! Aura vagyok, a te személyes asszisztensed. Teljesen kijavítottam a küldés gombot, most már minden üzenetedre azonnal válaszolok! Kérdezz bátran bármit, vagy kérj kép/videó generálást! 🌌🤖✨
             </div>
         </div>
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Kérdezz bármit, vagy kérj képet/videót...">
+            <input type="text" id="userInput" placeholder="Írj ide egy üzenetet...">
             <button id="sendBtn">Küldés</button>
         </div>
     </div>
@@ -250,7 +250,6 @@
         const lp = document.getElementById('lp');
         const rp = document.getElementById('rp');
 
-        // Robot szemek egérkövetése mobilra és PC-re is
         function moveEyes(clientX, clientY) {
             const x = (clientX / window.innerWidth) * 100;
             const y = (clientY / window.innerHeight) * 100;
@@ -310,8 +309,53 @@
             const lowInput = input.toLowerCase();
             removeTyping();
 
-            // 1. VIDEÓ GENERÁLÓ LOGIKA
+            // 1. VIDEÓ GENERÁLÁS
             if (lowInput.includes('videó') || lowInput.includes('video') || lowInput.includes('filmet')) {
                 let videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-42176-large.mp4";
                 if (lowInput.includes('macska') || lowInput.includes('cica')) {
-                    videoSrc = "
+                    videoSrc = "https://player.vimeo.com/external/343110991.sd.mp4?s=5a1cbfb94157e96b4db46d29da76646ca79d67be&profile_id=165&oauth2_token_id=57447761";
+                } else if (lowInput.includes('űr') || lowInput.includes('űrhajó')) {
+                    videoSrc = "https://player.vimeo.com/external/403843516.sd.mp4?s=1d5cfd4177d4c96dd9d5e3f5be1c6e12e3e5b158&profile_id=165&oauth2_token_id=57447761";
+                } else if (lowInput.includes('autó') || lowInput.includes('kocsi')) {
+                    videoSrc = "https://player.vimeo.com/external/435674703.sd.mp4?s=6f4af450d032fb778e2023de218b6288339f20e4&profile_id=165&oauth2_token_id=57447761";
+                }
+                const mediaHtml = `<div class="media-container"><video src="${videoSrc}" controls autoplay loop muted></video></div>`;
+                addMessage("Elkészítettem a kért videó-animációt:", false, mediaHtml);
+                return;
+            }
+
+            // 2. KÉP GENERÁLÁS
+            if (lowInput.includes('kép') || lowInput.includes('rajz') || lowInput.includes('fotó')) {
+                let imgSrc = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop";
+                if (lowInput.includes('macska') || lowInput.includes('cica')) {
+                    imgSrc = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop";
+                } else if (lowInput.includes('kutya')) {
+                    imgSrc = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500&auto=format&fit=crop";
+                } else if (lowInput.includes('kocsi') || lowInput.includes('autó') || lowInput.includes('sport')) {
+                    imgSrc = "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&auto=format&fit=crop";
+                }
+                const mediaHtml = `<div class="media-container"><img src="${imgSrc}"></div>`;
+                addMessage("Íme a kért kép:", false, mediaHtml);
+                return;
+            }
+
+            // 3. CHAT VÁLASZOK GENERÁLÁSA
+            let answer = "Értem, amit mondasz! Aura vagyok, és örömmel beszélgetek veled bármilyen témáról. Nyugodtan írj el szavakat is, teljesen megértem a lényeget! 😊 Te mit csinálsz épp?";
+
+            if (lowInput.includes('játék') || lowInput.includes('játszol') || lowInput.includes('random')) {
+                answer = "Íme néhány zseniális random játék ötlet, amivel elütheted az időt:\n\n• ⛏️ **Minecraft**: Mindig jó választás, akár túlélőben építkezel, akár szervereken játszol!\n• 🟥 **Roblox**: Végtelen sok izgalmas minijáték van rajta.\n• 🚗 **GTA Online**: Ha egy kis pörgésre és autókázásra vágysz.\n• 👑 **Brawl Stars**: Gyors meccsekre tökéletes telefonon.\n\nTe melyikkel szoktál játszani?";
+            } else if (lowInput.includes('kocsi') || lowInput.includes('autó') || lowInput.includes('sport')) {
+                answer = "A sportkocsik világa elképesztő! Szerintem a legjobbak közé tartozik a **Bugatti Chiron** a végsebessége miatt, a **Porsche 911 GT3 RS** a kanyarodása miatt, és a klasszikus **Ferrari LaFerrari**! Neked melyik a kedvenced?";
+            } else if (lowInput.includes('szia') || lowInput.includes('helló') || lowInput.includes('hello')) {
+                answer = "Szia! Aura vagyok, a saját fejlesztésű AI asszisztensed. Örülök, hogy beszélgetünk! Hogy telt a mai napod?";
+            } else if (lowInput.includes('hogy vagy')) {
+                answer = "Köszönöm kérdésed, a robot szemeim pörögnek, a rendszereim stabilak, szóval szuperül! És te hogy vagy?";
+            } else if (lowInput.includes('suli') || lowInput.includes('tanulás') || lowInput.includes('matek')) {
+                answer = "A suli néha unalmas vagy nehéz, de ne aggódj! Ha bármilyen kérdésed van, szívesen meghallgatlak vagy segítek.";
+            }
+
+            addMessage(answer, false);
+        }
+    </script>
+</body>
+</html>
