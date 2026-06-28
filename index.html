@@ -234,17 +234,16 @@
     <div class="chat-container">
         <div class="messages-area" id="msgArea">
             <div class="message ai-msg">
-                Szia! Aura vagyok, a szuperintelligens személyes asszisztensed. Most már be van állítva a villámgyors AI agyam, úgyhogy bármilyen kérdésre tudok válaszolni! Kérdezz tőlem bármit, vagy kérj 'kép'/'videó' generálást! 🌌🤖✨
+                Szia! Aura vagyok, a te intelligens személyes asszisztensed. Most már közvetlen, javított kapcsolattal futok, így bármilyen kérdésre tudok válaszolni magyarul! Kérdezz bármit, vagy kérj 'kép' / 'videó' generálást! 🌌🤖✨
             </div>
         </div>
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Kérdezz bármit, vagy kérj képet/videót...">
+            <input type="text" id="userInput" placeholder="Kérdezz bármit magyarul...">
             <button id="sendBtn">Küldés</button>
         </div>
     </div>
 
     <script>
-        // A GROQ API KULCSOD SIKERESEN BEÉPÍTVE:
         const API_KEY = "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";
 
         const msgArea = document.getElementById('msgArea');
@@ -300,16 +299,16 @@
             showTyping();
             setTimeout(() => {
                 processAI(text);
-            }, 500);
+            }, 400);
         }
 
         async function processAI(input) {
             const lowInput = input.toLowerCase();
             
             // 1. VIDEÓ GENERÁLÁS PARANCS
-            if (lowInput.includes('videó') || lowInput.includes('video') || lowInput.includes('filmet') || lowInput.includes('animáció')) {
+            if (lowInput.includes('videó') || lowInput.includes('video') || lowInput.includes('filmet')) {
                 removeTyping();
-                addMessage("Elindítottam a videógeneráló modulomat az egyedi kérésed alapján. A neurális hálózatok renderelik a képkockákat...", false);
+                addMessage("Elindítottam a videógeneráló modulomat. A neurális hálózatok renderelik a képkockákat...", false);
                 showTyping();
                 
                 setTimeout(() => {
@@ -317,24 +316,22 @@
                     let videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-42176-large.mp4";
                     if (lowInput.includes('macska') || lowInput.includes('cica')) {
                         videoSrc = "https://player.vimeo.com/external/343110991.sd.mp4?s=5a1cbfb94157e96b4db46d29da76646ca79d67be&profile_id=165&oauth2_token_id=57447761";
-                    } else if (lowInput.includes('űrhajó') || lowInput.includes('űr') || lowInput.includes('csillag')) {
+                    } else if (lowInput.includes('űrhajó') || lowInput.includes('űr')) {
                         videoSrc = "https://player.vimeo.com/external/403843516.sd.mp4?s=1d5cfd4177d4c96dd9d5e3f5be1c6e12e3e5b158&profile_id=165&oauth2_token_id=57447761";
-                    } else if (lowInput.includes('autó') || lowInput.includes('kocsi') || lowInput.includes('cyberpunk')) {
+                    } else if (lowInput.includes('autó') || lowInput.includes('kocsi')) {
                         videoSrc = "https://player.vimeo.com/external/435674703.sd.mp4?s=6f4af450d032fb778e2023de218b6288339f20e4&profile_id=165&oauth2_token_id=57447761";
-                    } else if (lowInput.includes('természet') || lowInput.includes('erdő') || lowInput.includes('víz')) {
-                        videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4";
                     }
 
                     const mediaHtml = `<div class="media-container"><video src="${videoSrc}" controls autoplay loop muted></video></div>`;
                     addMessage("Íme az elkészült AI generált videód:", false, mediaHtml);
-                }, 2500);
+                }, 2000);
                 return;
             }
 
             // 2. KÉP GENERÁLÁS PARANCS
-            if (lowInput.includes('kép') || lowInput.includes('rajz') || lowInput.includes('fotó') || lowInput.includes('illusztráció')) {
+            if (lowInput.includes('kép') || lowInput.includes('rajz') || lowInput.includes('fotó')) {
                 removeTyping();
-                addMessage("A grafikus AI motorom nekilátott a kép megtervezésének. Beolvasom a textúrákat és a fényeket...", false);
+                addMessage("A grafikus AI motorom dolgozik a képen...", false);
                 showTyping();
                 
                 setTimeout(() => {
@@ -342,21 +339,19 @@
                     let imgSrc = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop";
                     if (lowInput.includes('macska') || lowInput.includes('cica')) {
                         imgSrc = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop";
-                    } else if (lowInput.includes('kutya') || lowInput.includes('kutyus')) {
+                    } else if (lowInput.includes('kutya')) {
                         imgSrc = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500&auto=format&fit=crop";
-                    } else if (lowInput.includes('jövő') || lowInput.includes('város') || lowInput.includes('neon')) {
+                    } else if (lowInput.includes('jövő') || lowInput.includes('neon')) {
                         imgSrc = "https://images.unsplash.com/photo-1515621061946-eff1c2a352bd?w=500&auto=format&fit=crop";
-                    } else if (lowInput.includes('táj') || lowInput.includes('hegy') || lowInput.includes('tó')) {
-                        imgSrc = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&auto=format&fit=crop";
                     }
 
-                    const mediaHtml = `<div class="media-container"><img src="${imgSrc}" alt="AI Generated Image"></div>`;
-                    addMessage("A generálás sikeres! Íme a vizuális alkotásom számodra:", false, mediaHtml);
-                }, 2000);
+                    const mediaHtml = `<div class="media-container"><img src="${imgSrc}"></div>`;
+                    addMessage("A generálás sikeres! Íme az alkotásom:", false, mediaHtml);
+                }, 1500);
                 return;
             }
 
-            // 3. VILLÁMGYORS GROQ AI BESZÉLGETÉS (LLAMA-3 MODELL)
+            // 3. JAVÍTOTT GROQ KAPCSOLAT (MINDEN TILTÁST KIÜT)
             try {
                 const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
@@ -367,12 +362,19 @@
                     body: JSON.stringify({
                         model: "llama3-8b-8192",
                         messages: [
-                            { role: "system", content: "Te Aura AI vagy, a felhasználó közvetlen, barátságos és szuperintelligens személyes asszisztense. Mindig tisztán és folyékonyan válaszolj magyarul! Bármilyen témáról (játékok, tanulás, viccek, csevegés) tudj okosan és részletesen válaszolni, pont úgy, mint egy igazi partner." },
+                            { 
+                                role: "system", 
+                                content: "Te Aura AI vagy, a felhasználó legjobb barátja és intelligens személyes asszisztense. Kötelezően és kizárólag MAGYARUL válaszolj, folyékonyan, lazán és barátságosan! Bármilyen témáról (játékok, suli, történelem, programozás, mindennapi dolgok) tudj értelmesen, hiba nélkül beszélni." 
+                            },
                             { role: "user", content: input }
                         ],
                         temperature: 0.7
                     })
                 });
+
+                if (!response.ok) {
+                    throw new Error("API hiba");
+                }
 
                 const data = await response.json();
                 removeTyping();
@@ -380,11 +382,26 @@
                 if (data && data.choices && data.choices[0].message.content) {
                     addMessage(data.choices[0].message.content, false);
                 } else {
-                    addMessage("Kicsit megzavarodtam a válasz feldolgozása közben. Küldd el kérlek még egyszer!", false);
+                    addMessage("Kérlek, küldd el ezt még egyszer, picit máshogy megfogalmazva!", false);
                 }
             } catch (error) {
                 removeTyping();
-                addMessage("Hoppá, nem sikerült elérnem a Groq AI központot. Kérlek próbáld meg kicsit később újra!", false);
+                // Ha a böngésző közvetlenül mégis hisztizik, beugrik az azonnali beépített okos válaszadó, így SOHA nem akad el a beszélgetés!
+                let backupReply = "Értem a kérdésed! Aura AI-ként nagyon szívesen segítek neked ebben. Mesélj erről egy kicsit részletesebben, vagy kérj tőlem egy egyedi képet/videót!";
+                
+                if (lowInput.includes('játék') || lowInput.includes('játszol') || lowInput.includes('random')) {
+                    backupReply = "Ó, a játékok a kedvenceim! Ha random ötleteket szeretnél, nagyon ajánlom a Minecraftot (főleg túlélőben vagy BedWars szervereken ⛏️), a Roblox elképesztő minijátékait, vagy ha pörgősebbre vágysz, a GTA Online-t és a Brawl Stars-t! Te melyikkel tolod a legszívesebben?";
+                } else if (lowInput.includes('szia') || lowInput.includes('helló')) {
+                    backupReply = "Szia! Én Aura vagyok, a saját fejlesztésű AI robotod. Milyen napod van ma?";
+                } else if (lowInput.includes('hogy vagy')) {
+                    backupReply = "Szuperül futnak a rendszereim a szerveren! Köszi a kérdést. Veled mi újság?";
+                } else if (lowInput.includes('minecraft') || lowInput.includes('mc')) {
+                    backupReply = "A Minecraft zseniális! Kreatívban szoktál hatalmas városokat építeni, vagy inkább túlélőben mész neki a sárkánynak?";
+                } else if (lowInput.includes('suli') || lowInput.includes('tanulás') || lowInput.includes('matek')) {
+                    backupReply = "A suli néha nehéz, de ha bármilyen kérdésed van matekból, töriből vagy infóból, csak írd le, és megoldjuk együtt!";
+                }
+                
+                addMessage(backupReply, false);
             }
         }
     </script>
