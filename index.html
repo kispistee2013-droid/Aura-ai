@@ -227,14 +227,14 @@
         <div class="ai-title">AURA AI</div>
         <div class="status-badge">
             <div class="status-dot"></div>
-            Kapcsolat aktív
+            Kapcsolat frissítve
         </div>
     </div>
 
     <div class="chat-container">
         <div class="messages-area" id="msgArea">
             <div class="message ai-msg">
-                Szia! Aura vagyok. Sikerült teljesen átalakítanom a kommunikációs csatornámat, így most már korlátozások nélkül tudunk beszélgetni bármiről, magyarul! Kérdezz bátran! 🌌🤖✨
+                Szia! Aura vagyok, a te személyes asszisztensed. Kijavítottam az agyamat, így most már rendesen figyelek minden szavadra, és nem értelek félre! Nyugodtan írj el szavakat is, megértem. Kérdezz bármit! 🌌🤖✨
             </div>
         </div>
         <div class="input-area">
@@ -319,31 +319,29 @@
                 return;
             }
 
-            // BÖNGÉSZŐBIZTOS, NYÍLT ASSZISZTENS MOTOR
+            // STABILIZÁLT, KÖZVETLEN MEGHÍVÁS - TEXT FORMÁTUMBAN
             try {
-                const response = await fetch("https://text.pollinations.ai/", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        messages: [
-                            { role: "system", content: "Te Aura AI vagy, egy végtelenül barátságos, laza és szuperintelligens személyes asszisztens. Mindig válaszolj tökéletes, folyékony magyar nyelven! Bármilyen témáról (kocsik, játékok, suli, történelem) kérdez a felhasználó, adj neki egyedi, részletes és értelmes választ." },
-                            { role: "user", content: input }
-                        ],
-                        model: "openai"
-                    })
-                });
+                // Szigorú utasítás, hogy ki ő és hogyan kell viselkednie
+                const systemPrompt = "Te Aura AI vagy, egy barátságos, laza és szuperintelligens személyes asszisztens. Mindig válaszolj normális, folyékony magyar nyelven! Ha a felhasználó elírja a szavakat, ne javítgasd ki, hanem értsd meg a lényeget és válaszolj magára a kérdésre/felvetésre barátiasan! Bármilyen témáról (kocsik, játékok, suli) tudj értelmesen beszélgetni.";
+                
+                // Összerakjuk neki tisztán, hogy mit kell feldolgoznia
+                const finalPrompt = `${systemPrompt}\n\nFelhasználó üzenete: ${input}\n\nAura AI válasza magyarul:`;
+
+                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(finalPrompt)}?model=openai`);
+
+                if (!response.ok) throw new Error("Hiba");
 
                 const replyText = await response.text();
                 removeTyping();
 
                 if (replyText && replyText.trim().length > 0) {
-                    addMessage(replyText, false);
+                    addMessage(replyText.trim(), false);
                 } else {
-                    addMessage("Szia! Ezt a kérést most nem sikerült teljesen feldolgoznom, megkérdeznéd esetleg máshogy?", false);
+                    addMessage("Szia! Ezt most nem sikerült teljesen feldolgoznom, megkérdeznéd esetleg máshogy?", false);
                 }
             } catch (error) {
                 removeTyping();
-                addMessage("Pici hiba történt a rendszeremben, kérlek küldd el újra!", false);
+                addMessage("Pici hiba történt a rendszeremben, küldd el kérlek újra!", false);
             }
         }
     </script>
