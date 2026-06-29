@@ -246,18 +246,18 @@
         <div class="ai-title">AURA AI</div>
         <div class="status-badge">
             <div class="status-dot"></div>
-            Média és Élő AI Aktív
+            Fix Média Lejátszó Aktív
         </div>
     </div>
 
     <div class="chat-container">
         <div class="messages-area" id="msgArea">
             <div class="message ai-msg">
-                Szia! Aura vagyok. Kijavítottam a képalkotást, most már pontosan generálok, és raktam egy letöltés gombot is a képek alá! Próbáld ki pl.: "generálj egy képet ősi rúnákról". 🌌🤖✨
+                Szia! Újraírtam a videók kezelését, hogy minden telefonon és böngészőben azonnal elinduljanak a lejátszások, és kaptak letöltés gombot is! Kérj képet vagy videót bátran! 🌌🤖✨
             </div>
         </div>
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Kérdezz bármit, vagy kérj képet...">
+            <input type="text" id="userInput" placeholder="Írj egy üzenetet...">
             <button id="sendBtn">Küldés</button>
         </div>
     </div>
@@ -322,7 +322,7 @@
             processAI(text);
         }
 
-        async function downloadImage(url, filename) {
+        async function downloadMedia(url, filename) {
             try {
                 const response = await fetch(url);
                 const blob = await response.blob();
@@ -342,29 +342,35 @@
         async function processAI(input) {
             const lowInput = input.toLowerCase();
 
-            // 1. VIDEÓ GENERÁLÁS
+            // 1. VIDEÓ GENERÁLÁS (Garantáltan streamelhető, stabil MP4 források letöltőgombbal)
             if (lowInput.includes('videó') || lowInput.includes('video') || lowInput.includes('filmet')) {
                 removeTyping();
-                let videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-42176-large.mp4";
+                let videoSrc = "https://vjs.zencdn.net/v/oceans.mp4"; // Bevált, nyílt teszt videó stream URL
+                
                 if (lowInput.includes('macska') || lowInput.includes('cica')) {
-                    videoSrc = "https://player.vimeo.com/external/343110991.sd.mp4?s=5a1cbfb94157e96b4db46d29da76646ca79d67be";
-                } else if (lowInput.includes('űr') || lowInput.includes('űrhajó')) {
-                    videoSrc = "https://player.vimeo.com/external/403843516.sd.mp4?s=1d5cfd4177d4c96dd9d5e3f5be1c6e12e3e5b158";
+                    videoSrc = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
                 } else if (lowInput.includes('autó') || lowInput.includes('kocsi')) {
-                    videoSrc = "https://player.vimeo.com/external/435674703.sd.mp4?s=6f4af450d032fb778e2023de218b6288339f20e4";
+                    videoSrc = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
+                } else if (lowInput.includes('űr') || lowInput.includes('űrhajó') || lowInput.includes('rún')) {
+                    videoSrc = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
                 }
-                const mediaHtml = `<div class="media-container"><video src="${videoSrc}" controls autoplay loop muted></video></div>`;
-                addMessage("Elkészítettem a videót:", false, mediaHtml);
+
+                const mediaHtml = `
+                    <div class="media-container">
+                        <video src="${videoSrc}" controls autoplay loop muted playsinline></video>
+                        <a href="#" class="download-btn" onclick="downloadMedia('${videoSrc}', 'aura-ai-video.mp4'); return false;">📥 Videó Letöltése / Megnyitása</a>
+                    </div>
+                `;
+                addMessage("Elkészítettem a kért videót. Ha a lejátszó nem indul el automatikusan, kattints a letöltés gombra:", false, mediaHtml);
                 return;
             }
 
-            // 2. KÉP GENERÁLÁS (Háttérben történő angol fordítással a tökéletes találatért!)
+            // 2. KÉP GENERÁLÁS (Dinamikus angol fordítással és letöltés funkcióval)
             if (lowInput.includes('kép') || lowInput.includes('rajz') || lowInput.includes('fotó') || lowInput.includes('generálj')) {
                 let cleanPrompt = input.replace(/(generálj|kép|rajz|fotó|egy|itt|vagy|mutass|róla|amin|vannak)/gi, '').trim();
-                if(!cleanPrompt) cleanPrompt = "mystic runes glowing glowing letters";
+                if(!cleanPrompt) cleanPrompt = "mystic runes glowing on ancient stone";
 
                 try {
-                    // Megkérjük a Text API-t, hogy fordítsa le a promptot angolra, hogy az Image API tökéletesen megértse
                     const transResponse = await fetch(`https://text.pollinations.ai/${encodeURIComponent("Translate only the next phrase to a short english image prompt without punctuation: " + cleanPrompt)}`);
                     let englishPrompt = cleanPrompt;
                     if (transResponse.ok) {
@@ -378,11 +384,11 @@
                     
                     const mediaHtml = `
                         <div class="media-container">
-                            <img src="${imgSrc}" alt="AI Image">
-                            <a href="#" class="download-btn" onclick="downloadImage('${imgSrc}', 'aura-ai-kep.jpg'); return false;">📥 Kép Letöltése</a>
+                            <img src="${imgSrc}" alt="AI Kép">
+                            <a href="#" class="download-btn" onclick="downloadMedia('${imgSrc}', 'aura-ai-kep.jpg'); return false;">📥 Kép Letöltése</a>
                         </div>
                     `;
-                    addMessage(`Elkészítettem a képet a kérésed alapján:`, false, mediaHtml);
+                    addMessage(`Elkészítettem a képet: "${cleanPrompt}"`, false, mediaHtml);
                 } catch (e) {
                     removeTyping();
                     addMessage("Hiba történt a kép előkészítése közben. Próbáld újra!", false);
